@@ -43,6 +43,7 @@ class optimized_vector {
 private:
     bool is_small() const;
     void to_big();
+    void to_small();
 
 public:
     optimized_vector();
@@ -61,6 +62,7 @@ public:
     void swap(optimized_vector& other) noexcept;
 
     void push_back(uint32_t const &val);
+    void pop_back();
     const uint32_t& back() const;
     uint32_t& back();
 

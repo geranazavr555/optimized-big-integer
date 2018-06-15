@@ -232,3 +232,31 @@ TEST(vector, back)
     b.back() = 8;
     ASSERT_EQ(b.back(), 8u);
 }
+
+TEST(vector, small_pop_back)
+{
+    optimized_vector a(SMALL_SIZE);
+    a.pop_back();
+    ASSERT_EQ(a.size(), SMALL_SIZE - 1);
+}
+
+TEST(vector, big_pop_back)
+{
+    optimized_vector a(BIG_SIZE);
+    a.back() = 7;
+    a[a.size() - 2] = 6;
+    a.pop_back();
+    ASSERT_EQ(a.back(), 6);
+    ASSERT_EQ(a.size(), BIG_SIZE - 1);
+}
+
+TEST(vector, big_to_small_pop_back)
+{
+    optimized_vector a(BIG_SIZE);
+    for (uint32_t i = 0; i < BIG_SIZE; ++i)
+        a[i] = i + 1;
+    while (a.size() > SMALL_SIZE)
+        a.pop_back();
+    ASSERT_EQ(a.size(), SMALL_SIZE);
+    ASSERT_EQ(a[0], 1);
+}

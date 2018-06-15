@@ -191,14 +191,20 @@ size_t optimized_vector::size() const
 
 void optimized_vector::to_big()
 {
-    if (is_small())
-    {
-        size_t capacity = std::max(SMALL_OBJECT_SIZE + 2, siz * 2);
+    size_t capacity = std::max(SMALL_OBJECT_SIZE + 2, siz * 2);
 
-        shared_ptr<uint32_t> ptr(new uint32_t[capacity], std::default_delete<uint32_t[]>());
-        std::copy(small_data, small_data + siz, ptr.get());
-        new(&data) big_vector(capacity, ptr);
-    }
+    shared_ptr<uint32_t> ptr(new uint32_t[capacity], std::default_delete<uint32_t[]>());
+    std::copy(small_data, small_data + siz, ptr.get());
+    new(&data) big_vector(capacity, ptr);
+
+}
+
+void optimized_vector::to_small()
+{
+    uint32_t tmp[SMALL_OBJECT_SIZE];
+    std::move(data.begin(), data.begin() + siz, tmp);
+    data.data.~shared_ptr<uint32_t>();
+    std::move(tmp, tmp + SMALL_OBJECT_SIZE, small_data);
 }
 
 void optimized_vector::push_back(uint32_t const &val)
@@ -232,4 +238,11 @@ uint32_t& optimized_vector::back()
     if (is_small())
         return small_data[siz - 1];
     return data[siz - 1];
+}
+
+void optimized_vector::pop_back()
+{
+    --siz;
+    if (siz == SMALL_OBJECT_SIZE)
+        to_small();
 }
