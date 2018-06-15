@@ -297,3 +297,31 @@ TEST(vector, range_for)
     for (size_t i = 0; i < v.size(); ++i)
         ASSERT_EQ(v[i], VAL);
 }
+
+TEST(vector, big_small_resize)
+{
+    optimized_vector v(BIG_SIZE, VAL);
+    v.resize(SMALL_SIZE);
+    ASSERT_EQ(v.size(), SMALL_SIZE);
+    ASSERT_EQ(v[0], VAL);
+}
+
+TEST(vector, small_big_resize)
+{
+    optimized_vector v(SMALL_SIZE, VAL);
+    v.resize(BIG_SIZE);
+    ASSERT_EQ(v.size(), BIG_SIZE);
+    ASSERT_EQ(v[0], VAL);
+    ASSERT_EQ(v.back(), 0u);
+}
+
+TEST(vector, big_big_resize)
+{
+    optimized_vector v(BIG_SIZE, VAL);
+    v.resize(BIG_SIZE * 3);
+    ASSERT_EQ(v.size(), BIG_SIZE * 3);
+    ASSERT_EQ(v[0], VAL);
+    ASSERT_EQ(v[BIG_SIZE - 1], VAL);
+    ASSERT_EQ(v[BIG_SIZE], 0u);
+    ASSERT_EQ(v.back(), 0u);
+}

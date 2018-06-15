@@ -71,6 +71,7 @@ public:
     uint32_t* end();
     const uint32_t* end() const;
 
+    void resize(size_t n);
     size_t size() const;
     void detach();
 };

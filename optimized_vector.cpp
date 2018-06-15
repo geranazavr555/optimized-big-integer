@@ -274,3 +274,35 @@ uint32_t* optimized_vector::end()
         return small_data + siz;
     return data.begin() + siz;
 }
+
+void optimized_vector::resize(size_t n)
+{
+    if (is_small())
+    {
+        if (n <= SMALL_OBJECT_SIZE)
+            for (size_t i = siz; i < SMALL_OBJECT_SIZE; ++i)
+                small_data[i] = 0;
+        else
+        {
+            to_big();
+            data.guarantee_capacity(n);
+            for (size_t i = siz; i < n; ++i)
+                data[i] = 0;
+        }
+    }
+    else
+    {
+        if (n <= SMALL_OBJECT_SIZE)
+        {
+            siz = n;
+            to_small();
+        }
+        else
+        {
+            data.guarantee_capacity(n);
+            for (size_t i = siz; i < n; ++i)
+                data[i] = 0;
+        }
+    }
+    siz = n;
+}
