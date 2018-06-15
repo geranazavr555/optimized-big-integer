@@ -72,6 +72,20 @@ TEST(vector, big_copy_ctor)
         ASSERT_EQ(vv[i], VAL + i);
 }
 
+TEST(vector, initializer_list_ctor)
+{
+    optimized_vector v{1, 2, 3, 4, 5};
+    for (uint32_t i = 0; i < 4; ++i)
+        ASSERT_EQ(v[i], i + 1);
+}
+
+TEST(vector, initializer_list_arg_ctor)
+{
+    optimized_vector v({1, 2, 3, 4, 5});
+    for (uint32_t i = 0; i < 4; ++i)
+        ASSERT_EQ(v[i], i + 1);
+}
+
 TEST(vector, small_detaching)
 {
     optimized_vector v(SMALL_SIZE, VAL);
@@ -98,4 +112,123 @@ TEST(vector, big_detaching)
         ASSERT_EQ(v[i], VAL);
     for (size_t i = 0; i < BIG_SIZE; ++i)
         ASSERT_EQ(vv[i], VAL + i);
+}
+
+TEST(vector, getting_size)
+{
+    const size_t SIZE = 61;
+    optimized_vector v(SIZE);
+    ASSERT_EQ(v.size(), SIZE);
+}
+
+TEST(vector, small_push_back)
+{
+    optimized_vector v;
+    v.push_back(VAL);
+    ASSERT_EQ(v[0], VAL);
+}
+
+TEST(vector, big_push_back)
+{
+    optimized_vector v(BIG_SIZE);
+    v.push_back(VAL);
+    ASSERT_EQ(v[BIG_SIZE], VAL);
+}
+
+TEST(vector, small_to_big_push_back)
+{
+    optimized_vector v;
+    for (size_t i = 0; i < BIG_SIZE; ++i)
+        v.push_back(i);
+    for (size_t i = 0; i < BIG_SIZE; ++i)
+        ASSERT_EQ(v[i], i);
+}
+
+TEST(vector, changing_size)
+{
+    optimized_vector v;
+    for (size_t i = 0; i < BIG_SIZE; ++i)
+    {
+        ASSERT_EQ(v.size(), i);
+        v.push_back(i);
+    }
+}
+
+TEST(vector, small_small_assignment)
+{
+    optimized_vector a(SMALL_SIZE, 1);
+    optimized_vector b(SMALL_SIZE, 2);
+    b = a;
+    for (size_t i = 0; i < a.size(); ++i)
+        ASSERT_EQ(b[i], a[i]);
+}
+
+TEST(vector, big_big_assignment)
+{
+    optimized_vector a(BIG_SIZE, 1);
+    optimized_vector b(BIG_SIZE, 2);
+    b = a;
+    for (size_t i = 0; i < a.size(); ++i)
+        ASSERT_EQ(b[i], a[i]);
+}
+
+TEST(vector, big_small_assignment)
+{
+    optimized_vector a(SMALL_SIZE, 1);
+    optimized_vector b(BIG_SIZE, 2);
+    b = a;
+    for (size_t i = 0; i < a.size(); ++i)
+        ASSERT_EQ(b[i], a[i]);
+}
+
+TEST(vector, small_big_assignment)
+{
+    optimized_vector a(BIG_SIZE, 1);
+    optimized_vector b(SMALL_SIZE, 2);
+    b = a;
+    for (size_t i = 0; i < a.size(); ++i)
+        ASSERT_EQ(b[i], a[i]);
+}
+
+TEST(vector, small_change_after_assignment)
+{
+    optimized_vector a(SMALL_SIZE, 1);
+    optimized_vector b(SMALL_SIZE, 2);
+    b = a;
+    b[0] = 5;
+    ASSERT_EQ(a[0], 1u);
+    ASSERT_EQ(b[0], 5u);
+}
+
+TEST(vector, big_change_after_assignment)
+{
+    optimized_vector a(BIG_SIZE, 1);
+    optimized_vector b(BIG_SIZE, 2);
+    b = a;
+    b[0] = 5;
+    ASSERT_EQ(a[0], 1u);
+    ASSERT_EQ(b[0], 5u);
+}
+
+TEST(vector, swap)
+{
+    optimized_vector a(BIG_SIZE, 1);
+    optimized_vector b(SMALL_SIZE, 2);
+    optimized_vector c(a), d(b);
+
+    swap(a, b);
+
+    for (size_t i = 0; i < b.size(); ++i)
+        ASSERT_EQ(b[i], c[i]);
+    for (size_t i = 0; i < a.size(); ++i)
+        ASSERT_EQ(a[i], d[i]);
+}
+
+TEST(vector, back)
+{
+    optimized_vector a(BIG_SIZE), b(SMALL_SIZE);
+    a.back() = 7;
+    ASSERT_EQ(a.back(), 7u);
+    b.back() = 8;
+    ASSERT_EQ(b.back(), 8u);
 }
