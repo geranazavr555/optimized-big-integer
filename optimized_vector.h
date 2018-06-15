@@ -66,6 +66,11 @@ public:
     const uint32_t& back() const;
     uint32_t& back();
 
+    uint32_t* begin();
+    const uint32_t* begin() const;
+    uint32_t* end();
+    const uint32_t* end() const;
+
     size_t size() const;
     void detach();
 };

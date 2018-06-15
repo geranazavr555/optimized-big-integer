@@ -246,8 +246,8 @@ TEST(vector, big_pop_back)
     a.back() = 7;
     a[a.size() - 2] = 6;
     a.pop_back();
-    ASSERT_EQ(a.back(), 6);
-    ASSERT_EQ(a.size(), BIG_SIZE - 1);
+    ASSERT_EQ(a.back(), 6u);
+    ASSERT_EQ(a.size(), BIG_SIZE - 1u);
 }
 
 TEST(vector, big_to_small_pop_back)
@@ -258,5 +258,42 @@ TEST(vector, big_to_small_pop_back)
     while (a.size() > SMALL_SIZE)
         a.pop_back();
     ASSERT_EQ(a.size(), SMALL_SIZE);
-    ASSERT_EQ(a[0], 1);
+    ASSERT_EQ(a[0], 1u);
+}
+
+TEST(vector, small_begin)
+{
+    optimized_vector v(SMALL_SIZE);
+    *(v.begin()) = 5;
+    ASSERT_EQ(v[0], 5u);
+}
+
+TEST(vector, big_begin)
+{
+    optimized_vector v(BIG_SIZE);
+    *(v.begin()) = 5;
+    ASSERT_EQ(v[0], 5u);
+}
+
+TEST(vector, small_end)
+{
+    optimized_vector v(SMALL_SIZE);
+    *(v.end() - 1) = 5;
+    ASSERT_EQ(v.back(), 5u);
+}
+
+TEST(vector, big_end)
+{
+    optimized_vector v(BIG_SIZE);
+    *(v.end() - 1) = 5;
+    ASSERT_EQ(v.back(), 5u);
+}
+
+TEST(vector, range_for)
+{
+    optimized_vector v(BIG_SIZE);
+    for (auto& x : v)
+        x = VAL;
+    for (size_t i = 0; i < v.size(); ++i)
+        ASSERT_EQ(v[i], VAL);
 }

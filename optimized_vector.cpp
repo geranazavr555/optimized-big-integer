@@ -246,3 +246,31 @@ void optimized_vector::pop_back()
     if (siz == SMALL_OBJECT_SIZE)
         to_small();
 }
+
+const uint32_t* optimized_vector::begin() const
+{
+    if (is_small())
+        return small_data;
+    return data.begin();
+}
+
+uint32_t* optimized_vector::begin()
+{
+    if (is_small())
+        return small_data;
+    return data.begin();
+}
+
+const uint32_t* optimized_vector::end() const
+{
+    if (is_small())
+        return small_data + siz;
+    return data.begin() + siz;
+}
+
+uint32_t* optimized_vector::end()
+{
+    if (is_small())
+        return small_data + siz;
+    return data.begin() + siz;
+}
