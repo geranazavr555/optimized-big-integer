@@ -12,7 +12,8 @@ using std::shared_ptr;
 
 
 optimized_vector::big_vector::big_vector(size_t capacity, shared_ptr<uint32_t> data) :
-        capacity(capacity), data(std::move(data))
+        capacity(capacity),
+        data(std::move(data))
 {}
 
 optimized_vector::big_vector::big_vector(big_vector const &other) :

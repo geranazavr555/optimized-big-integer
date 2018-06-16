@@ -16,10 +16,14 @@ add_executable(big_integer_testing
         big_integer.cpp
         gtest/gtest-all.cc
         gtest/gtest.h
-        gtest/gtest_main.cc optimized_vector.cpp optimized_vector.h)
+        gtest/gtest_main.cc
+        optimized_vector.cpp
+        optimized_vector.h)
 
 add_executable(optimized_vector_testing
-        optimized_vector.cpp optimized_vector.h optimized_vector_testing.cpp
+        optimized_vector.cpp
+        optimized_vector.h
+        optimized_vector_testing.cpp
         gtest/gtest-all.cc
         gtest/gtest.h
         gtest/gtest_main.cc)
