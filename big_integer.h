@@ -1,6 +1,8 @@
 #ifndef BIG_INTEGER_H
 #define BIG_INTEGER_H
 
+#include "optimized_vector.h"
+
 #include <vector>
 #include <cstdint>
 #include <string>
@@ -12,11 +14,11 @@ class big_integer
     static const uint32_t LOG_BASE = 32u;
 
     bool sign;
-    std::vector <uint32_t> number;
+    optimized_vector number;
     size_t first_non_zero_index;
     bool is_two_complemented;
 
-    explicit big_integer(std::vector<uint32_t> const& number, bool sign = false, bool two_complemented = false);
+    explicit big_integer(optimized_vector const& number, bool sign = false, bool two_complemented = false);
     explicit big_integer(uint32_t x);
 
     size_t size() const;
@@ -79,8 +81,8 @@ public:
     friend bool operator<=(big_integer const& a, big_integer const& b);
     friend bool operator>=(big_integer const& a, big_integer const& b);
 
-    friend void emplace_shl(std::vector<uint32_t> const &src, int b, std::vector<uint32_t> &dest);
-    friend void emplace_shr(std::vector<uint32_t> const &src, int b, std::vector<uint32_t> &dest);
+    friend void emplace_shl(optimized_vector const &src, int b, optimized_vector &dest);
+    friend void emplace_shr(optimized_vector const &src, int b, optimized_vector &dest);
 
     friend std::string to_string(big_integer const& a);
     friend big_integer from_string(std::string const& str);

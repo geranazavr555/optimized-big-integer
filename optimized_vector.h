@@ -5,15 +5,13 @@
 #include <cstddef>
 #include <memory>
 
-class optimized_vector {
-    class big_vector
+class optimized_vector
+{
+    struct big_vector
     {
-    public:
         size_t capacity;
         std::shared_ptr <uint32_t> data;
 
-    public:
-        big_vector() = default;
         big_vector(size_t capacity, std::shared_ptr<uint32_t> data);
         big_vector(big_vector const &other);
 

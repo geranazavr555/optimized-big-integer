@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <iostream>
 
+typedef optimized_vector vector;
+
 big_integer::big_integer() : sign(false),
                              number(1, 0),
                              first_non_zero_index(SIZE_MAX),
@@ -25,7 +27,7 @@ big_integer::big_integer(int a) : sign(a < 0),
 }
 
 
-big_integer::big_integer(std::vector<uint32_t> const& number, bool sign, bool two_complemented) :
+big_integer::big_integer(optimized_vector const& number, bool sign, bool two_complemented) :
                                                 sign(sign), number(number), is_two_complemented(two_complemented)
 {
     this->normalize();
@@ -97,7 +99,7 @@ void big_integer::normalize()
         }
         if (i == size())
         {
-            number = std::vector<uint32_t >(1, 0);
+            number = vector(1, 0);
             sign = false;
             is_two_complemented = false;
             first_non_zero_index = SIZE_MAX;
@@ -133,7 +135,7 @@ void big_integer::normalize()
     }
     if (first_non_zero_index == SIZE_MAX)
     {
-        number = std::vector<uint32_t >(1, 0);
+        number = optimized_vector(1, 0);
         sign = false;
         is_two_complemented = false;
         first_non_zero_index = SIZE_MAX;
@@ -190,7 +192,7 @@ big_integer operator+(big_integer a, const big_integer &b)
         return b - abs(a);
 
     size_t max_len = std::max(a.size(), b.size());
-    std::vector <uint32_t> result(max_len + 1);
+    optimized_vector result(max_len + 1);
 
     size_t i = 0;
     uint64_t tmp = 0, carry = 0;
@@ -218,35 +220,6 @@ big_integer operator+(big_integer a, const big_integer &b)
 
     bool ans_sign = a.sign;
     return big_integer(result, ans_sign);
-
-    /*size_t max_len = std::max(a.size(), b.size());
-    std::vector <uint32_t> result(max_len + 1);
-
-    size_t i = 0;
-    uint64_t tmp = 0, carry = 0;
-    for (; i < max_len; ++i)
-    {
-        uint64_t x = a.digit_in_twos_complement(i);
-        uint64_t y = b.digit_in_twos_complement(i);
-        if (x < y)
-            x += carry;
-        else
-            y += carry;
-        tmp = x + y;
-        result[i] = static_cast<uint32_t>(tmp);
-        carry = tmp >> big_integer::LOG_BASE;
-    }
-    bool ans_sign = false;
-    if ((!a.sign && b.sign && abs(a) < abs(b)) || (a.sign && !b.sign && abs(a) > abs(b)) || (a.sign && b.sign))
-        ans_sign = true;
-    if (ans_sign)
-        result[i] = (UINT32_MAX);
-    else
-        if (!b.sign && !a.sign)
-            result[i] = static_cast<uint32_t>(carry);
-    big_integer temp(result, ans_sign, true);
-    temp.normalize();
-    return temp;*/
 }
 
 big_integer& big_integer::operator+=(big_integer const &rhs)
@@ -271,7 +244,7 @@ big_integer operator-(big_integer a, big_integer const &b)
     }
 
     size_t max_len = std::max(a.size(), b.size());
-    std::vector <uint32_t> result(max_len + 1);
+    optimized_vector result(max_len + 1);
 
     size_t i = 0;
     uint64_t tmp = 0, carry = 0;
@@ -304,8 +277,8 @@ big_integer operator*(big_integer a, big_integer const &b)
         return 0;
 
     size_t a_len = a.size(), b_len = b.size();
-    std::vector <uint32_t> tmp(a_len + b_len + 1);
-    std::vector <uint32_t> ans(a_len + b_len + 1, 0);
+    optimized_vector tmp(a_len + b_len + 1);
+    optimized_vector ans(a_len + b_len + 1, 0);
 
     for (size_t i = 0; i < b_len; i++)
     {
@@ -374,7 +347,7 @@ big_integer operator/(big_integer a, big_integer const &b) {
 
     size_t n = aa.size();
     size_t m = bb.size();
-    std::vector <uint32_t> ans(n - m + 1);
+    optimized_vector ans(n - m + 1);
     big_integer reminder(0);
 
     for (size_t i = n - 1; i > n - m; i--)
@@ -579,7 +552,7 @@ std::ostream& operator<<(std::ostream& s, big_integer const& a)
 
 big_integer operator&(big_integer a, big_integer const& b)
 {
-    std::vector<uint32_t> result;
+    optimized_vector result;
     for (size_t i = 0; i <= std::max(a.size(), b.size()); ++i)
     {
         result.push_back(a.digit_in_twos_complement(i) &
@@ -594,7 +567,7 @@ big_integer operator&(big_integer a, big_integer const& b)
 
 big_integer operator^(big_integer a, big_integer const& b)
 {
-    std::vector<uint32_t> result;
+    optimized_vector result;
     for (size_t i = 0; i <= std::max(a.size(), b.size()); ++i)
     {
         result.push_back(a.digit_in_twos_complement(i) ^
@@ -609,7 +582,7 @@ big_integer operator^(big_integer a, big_integer const& b)
 
 big_integer operator|(big_integer a, big_integer const& b)
 {
-    std::vector<uint32_t> result;
+    optimized_vector result;
     for (size_t i = 0; i <= std::max(a.size(), b.size()); ++i)
     {
         result.push_back(a.digit_in_twos_complement(i) |
@@ -640,7 +613,7 @@ big_integer& big_integer::operator^=(big_integer const& rhs)
 
 big_integer big_integer::operator~() const
 {
-    std::vector<uint32_t> result;
+    optimized_vector result;
     for (size_t i = 0; i < this->size(); ++i)
     {
         result.push_back(~(this->digit_in_twos_complement(i)));
@@ -652,7 +625,7 @@ big_integer big_integer::operator~() const
 }
 
 
-void emplace_shl(std::vector<uint32_t> const &src, int b, std::vector<uint32_t> &dest)
+void emplace_shl(optimized_vector const &src, int b, optimized_vector &dest)
 {
     //dest = src;
     dest.resize(src.size());
@@ -691,7 +664,7 @@ void emplace_shl(std::vector<uint32_t> const &src, int b, std::vector<uint32_t> 
 
 big_integer operator<<(big_integer a, int b)
 {
-    std::vector<uint32_t> tmp;
+    optimized_vector tmp;
     emplace_shl(a.number, b, tmp);
     return big_integer(tmp, a.sign);
 }
@@ -703,7 +676,7 @@ big_integer& big_integer::operator<<=(int rhs)
     return *this;
 }
 
-void emplace_shr(std::vector<uint32_t> const &src, int b, std::vector<uint32_t> &dest)
+void emplace_shr(optimized_vector const &src, int b, optimized_vector &dest)
 {
     dest.resize(src.size() - b / big_integer::LOG_BASE);
     b %= big_integer::LOG_BASE;
@@ -725,7 +698,7 @@ void emplace_shr(std::vector<uint32_t> const &src, int b, std::vector<uint32_t> 
 
 big_integer operator>>(big_integer a, int b)
 {
-    std::vector<uint32_t> res;
+    optimized_vector res;
     emplace_shr(a.number, b, res);
     big_integer tmp(res, a.sign);
     if (a.sign)
